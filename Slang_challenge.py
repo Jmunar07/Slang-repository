@@ -22,5 +22,36 @@ if response.status_code == 200:
         activity_id = activity["id"]
         answered_at = datetime.fromisoformat(activity["answered_at"])
         first_seen_at = datetime.fromisoformat(activity["first_seen_at"])
+
+        # Check if the user has any existing sessions
+        if user_id in user_sessions:
+            # Check if the current activity is in the same session as the previous activity
+            last_session = user_sessions[user_id][-1]
+            last_activity_answered_at = last_session["ended_at"]
+            if (answered_at - last_activity_answered_at) <= timedelta(minutes=5):
+                # Add the current activity to the same session
+                last_session["activity_ids"].append(activity_id)
+                last_session["ended_at"] = answered_at
+                last_session["duration_seconds"] = (answered_at - last_session["started_at"]).total_seconds()
+            else:
+                # Create a new session for the current activity
+                new_session = {
+                    "activity_ids": [activity_id],
+                    "started_at": first_seen_at,
+                    "ended_at": answered_at,
+                    "duration_seconds": (answered_at - first_seen_at).total_seconds()
+                }
+                user_sessions[user_id].append(new_session)
+        else:
+             # create the first session for the current activity
+             new_session = {
+                "activity_ids": [activity_id],
+                "started_at": first_seen_at,
+                "ended_at": answered_at,
+                "duration_seconds": (answered_at - first_seen_at).total_seconds()
+             }
+             user_sessions[user_id] = [new_session]
     
+
+            
     
