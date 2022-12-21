@@ -4,6 +4,7 @@ from datetime import datetime, timedelta
 
 # Set up the API
 api_endpoint = "https://api.slangapp.com/challenges/v1/activities"
+results_endpoint = "https://api.slangapp.com/challenges/v1/activities/sessions"
 headers = {"Content-Type": "application/json", "Authorization": "Basic MTUyOlVrelczQ2JBaXlaVTNLWTFFVVhPbnhHSTdvaEhpQkVvdURqeEZITHJzUzA9"}
 
 # Fetch data from the API
@@ -58,6 +59,21 @@ if response.status_code == 200:
             session["started_at"] = session["started_at"].isoformat()
             session["ended_at"] = session["ended_at"].isoformat()
     
+    # Create a final data struture
+    final_data = {
+        "user_sessions": user_sessions
+    }
+
+    # Posting the results to the endpoint
+    result = requests.post(results_endpoint, json=final_data, headers=headers)
+    
+    # Check for success submition 
+    if result.status_code == 204:
+        print('Successfully posted results')
+    else:
+        print(f"Failed to post results: {result.status_code} {result.reason}")
+else:
+    print('Failed to fetch data: {respones.status_code} {response.reason}')
 
     
 
