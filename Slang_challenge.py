@@ -52,6 +52,14 @@ if response.status_code == 200:
              }
              user_sessions[user_id] = [new_session]
     
+    # Convertion of time to ISO format again
+    for user_id, sessions in user_sessions.items():
+        for session in sessions:
+            session["started_at"] = session["started_at"].isoformat()
+            session["ended_at"] = session["ended_at"].isoformat()
+    
+
+    
 
             
     
