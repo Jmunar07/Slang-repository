@@ -9,6 +9,18 @@ headers = {"Content-Type": "application/json", "Authorization": "Basic MTUyOlVre
 # Fetch data from the API
 response = requests.get(api_endpoint, headers=headers)
 
-# Check for success 
+# Checking success accessing data
 if response.status_code == 200:
-    print('success')
+    # Parse the received json
+    data = response.json()
+    activities = data["activities"]
+
+    # Create a list of user sessions from the parsed JSON
+    user_sessions = {}
+    for activity in activities:
+        user_id = activity["user_id"]
+        activity_id = activity["id"]
+        answered_at = datetime.fromisoformat(activity["answered_at"])
+        first_seen_at = datetime.fromisoformat(activity["first_seen_at"])
+    
+    
